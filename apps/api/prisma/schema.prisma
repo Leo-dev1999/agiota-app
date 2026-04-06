@@ -1,0 +1,129 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  ownerName String
+  phone     String   @unique
+  email     String?  @unique
+  plan      String   @default("free")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients  Client[]
+  loans    Loan[]
+  settings TenantSettings?
+  users    User[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   @default("tenant")
+  tenantId  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+
+  @@index([username])
+}
+
+model TenantSettings {
+  id                  String  @id @default(cuid())
+  tenantId            String  @unique
+  defaultInterestRate Float   @default(30)
+  whatsappEnabled     Boolean @default(false)
+  whatsappApiUrl      String?
+  whatsappApiKey      String?
+  whatsappInstance    String?
+  notifyDayBefore     Boolean @default(true)
+  notifyOnDueDate     Boolean @default(true)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model Client {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  phone      String
+  address    String?
+  notes      String?
+  referredBy String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  loans  Loan[]
+
+  @@index([tenantId])
+  @@index([tenantId, name])
+}
+
+model Loan {
+  id                String   @id @default(cuid())
+  tenantId          String
+  clientId          String
+  principal         Float
+  currentPrincipal  Float
+  interestRate      Float
+  interestAmount    Float
+  interestAmountX2  Float
+  totalReturn       Float
+  billingType       String
+  installments      Int?
+  paymentDayOfMonth Int?
+  paymentDayOfWeek  Int?
+  startDate         DateTime @default(now())
+  referralType      String?
+  referralContact   String?
+  status            String   @default("PENDENTE")
+  observations      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  client   Client    @relation(fields: [clientId], references: [id])
+  payments Payment[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([clientId])
+}
+
+model Payment {
+  id                 String    @id @default(cuid())
+  loanId             String
+  dueDate            DateTime
+  paidDate           DateTime?
+  amount             Float
+  amountPaid         Float?
+  installmentNo      Int
+  status             String    @default("PENDENTE")
+  paymentType        String    @default("JUROS")
+  principalPaid      Float     @default(0)
+  interestPaid       Float     @default(0)
+  notes              String?
+  notifiedDayBefore  Boolean   @default(false)
+  notifiedOnDueDate  Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  loan Loan @relation(fields: [loanId], references: [id])
+
+  @@index([loanId])
+  @@index([dueDate])
+  @@index([status])
+}

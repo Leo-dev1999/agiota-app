@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = [
+  "npm install -g pnpm",
+  "cd ../.. && pnpm install --frozen-lockfile"
+]
+
+[phases.build]
+cmds = [
+  "cd ../.. && pnpm --filter shared build",
+  "cd ../.. && pnpm --filter api build",
+  "cd ../.. && pnpm --filter api db:generate"
+]
+
+[start]
+cmd = "cd ../.. && pnpm --filter api db:migrate:deploy && node apps/api/dist/index.js"
