@@ -51,8 +51,8 @@ export async function getDashboardSummary(tenantId: string) {
     ]
   )
 
-  const totalActive = activeLoans.reduce((sum, l) => sum + l.principal, 0)
-  const totalReturned = allLoans.reduce((sum, p) => sum + (p.amountPaid ?? 0), 0)
+  const totalActive = activeLoans.reduce((sum: number, l) => sum + l.principal, 0)
+  const totalReturned = allLoans.reduce((sum: number, p) => sum + (p.amountPaid ?? 0), 0)
 
   // Monthly returns: sum of payments due this month that are pending
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -65,7 +65,7 @@ export async function getDashboardSummary(tenantId: string) {
     },
     select: { amount: true },
   })
-  const monthlyReturns = monthlyPayments.reduce((sum, p) => sum + p.amount, 0)
+  const monthlyReturns = monthlyPayments.reduce((sum: number, p) => sum + p.amount, 0)
 
   return {
     totalActive,

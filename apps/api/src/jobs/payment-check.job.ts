@@ -32,7 +32,7 @@ export async function runPaymentCheckJob() {
     })
     await prisma.loan.updateMany({
       where: {
-        id: { in: overdueLoans.map((p) => p.loanId) },
+        id: { in: overdueLoans.map((p: { loanId: string }) => p.loanId) },
         status: { not: 'QUITADO' },
       },
       data: { status: 'ATRASADO' },
