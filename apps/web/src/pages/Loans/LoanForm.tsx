@@ -32,7 +32,7 @@ export function LoanForm({ clientId, onSuccess }: LoanFormProps) {
       interestRate: 30,
       billingType: BillingType.MENSAL,
       startDate: new Date().toISOString().split('T')[0],
-      referralType: '',
+      referralType: undefined,
     },
   })
 
@@ -61,7 +61,7 @@ export function LoanForm({ clientId, onSuccess }: LoanFormProps) {
   })
 
   return (
-    <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
+    <form onSubmit={handleSubmit((d: CreateLoanInput) => mutation.mutate(d))} className="space-y-4">
       {!clientId && (
         <Field label="Cliente *" error={errors.clientId?.message}>
           <select {...register('clientId')} className="input">

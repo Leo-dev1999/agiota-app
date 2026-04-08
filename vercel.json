@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter shared build && cd apps/web && vite build",
+  "buildCommand": "pnpm --filter shared build && pnpm --filter web build",
   "outputDirectory": "apps/web/dist",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": "vite"

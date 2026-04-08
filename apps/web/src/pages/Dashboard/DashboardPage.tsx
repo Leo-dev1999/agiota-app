@@ -30,6 +30,7 @@ export function DashboardPage() {
     mutationFn: (id: string) =>
       markAsPaid(id, {
         paidDate: new Date().toISOString().split('T')[0],
+        paymentType: 'JUROS' as const,
         amountPaid: parseFloat(payingAmount),
       }),
     onSuccess: () => {
