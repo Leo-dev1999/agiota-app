@@ -20,4 +20,4 @@ RUN pnpm --filter api db:generate
 
 EXPOSE 3000
 
-CMD pnpm --filter api db:migrate:deploy && node apps/api/dist/index.js
+CMD pnpm --filter api db:migrate:deploy && pnpm --filter api db:seed && node apps/api/dist/index.js
