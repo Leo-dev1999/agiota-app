@@ -14,5 +14,8 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "esbuild", "prisma"]
+  },
+  "prisma": {
+    "schema": "apps/api/prisma/schema.prisma"
   }
 }
